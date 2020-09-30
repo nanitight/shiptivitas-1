@@ -20,7 +20,59 @@ export default class Board extends React.Component {
       inProgress: React.createRef(),
       complete: React.createRef(),
     }
+  } // eof constructor 
+  // [document.querySelectorAll(".swimlane-column")]
+  componentDidMount(){
+    var drake = Dragula(Array.from(document.getElementsByClassName('Swimlane-dragColumn')),{
+      // copy:true ,
+      revertOnSpill: true ,
+      direction: 'vertical',
+      
+    }) ;
+    drake.on('cancel',()=>{
+
+    });
+    drake.on('drop',function(el,target,source,sibling){
+      // console.log(target.parentNode) ;
+      // console.log(el) ;
+      
+      function getCardClass(cName){
+        if (cName ==='Backlog'){
+          return 'Card-grey' ;
+        }
+        else if(cName === 'In Progress'){
+          return 'Card-blue' ;
+        }
+        else if (cName=== 'Complete'){
+          return 'Card-green' ;
+        }
+      }
+
+      if (target !== source){
+        let bigC = target.parentNode.firstChild.innerHTML ;
+        // console.log(getCardClass(bigC)) ;
+        let old = source.parentNode.firstChild.innerHTML ;
+        // console.log(getCardClass(old)) ;
+
+        if (bigC ==='Backlog'){
+         el.className = el.className.replace(getCardClass(old),getCardClass(bigC)) ;
+        }
+        else if (bigC ==='In Progress'){
+          // el.className += 'Card-blue' ;
+         el.className = el.className.replace(getCardClass(old),getCardClass(bigC)) ;
+
+        }
+        else if (bigC === 'Complete'){
+          // el.className += 'Card-green' ;
+         el.className = el.className.replace(getCardClass(old),getCardClass(bigC)) ;
+
+        }
+    }
+    }) ;
+    drake.end() ;
   }
+  
+
   getClients() {
     return [
       ['1','Stark, White and Abbott','Cloned Optimal Architecture', 'in-progress'],
@@ -49,12 +101,14 @@ export default class Board extends React.Component {
       description: companyDetails[2],
       status: companyDetails[3],
     }));
-  }
+  } //eof getClients ;
+
+
   renderSwimlane(name, clients, ref) {
     return (
-      <Swimlane name={name} clients={clients} dragulaRef={ref}/>
+      <Swimlane name={name} clients={clients} dragulaRef={ref} />
     );
-  }
+  } //eof renderSwimlane
 
   render() {
     return (
@@ -74,5 +128,10 @@ export default class Board extends React.Component {
         </div>
       </div>
     );
-  }
+  } //eof render
+
+
+  
 }
+
+
